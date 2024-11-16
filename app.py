@@ -22,8 +22,8 @@ def simple_text_analysis(text):
 @app.route('/')
 def index():
     return render_template('index.html')
+@app.route('/upload', methods=['GET', 'POST'])
 
-@app.route('/analyze', methods=['POST'])
 def analyze():
     if request.method == 'POST':
         text = request.form['text']
