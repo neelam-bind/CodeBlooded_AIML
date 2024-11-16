@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Resume Processed</title>
+</head>
+<body>
+    <h2>Resume Processed: {{ filename }}</h2>
+    <h3>Cleaned Text:</h3>
+    <pre>{{ cleaned_text }}</pre>
+
+    <h3>Extracted Skills:</h3>
+    <ul>
+        {% for skill in skills %}
+            <li>{{ skill }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
