@@ -1,0 +1,16 @@
+pandas
+Flask
+scikit-learn
+matplotlib
+numpy
+seaborn
+nltk
+pdfx
+spacy
+torch 
+torchvision 
+torchaudio
+transformers
+requests
+beautifulsoup4
+# -e .
