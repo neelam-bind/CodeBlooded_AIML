@@ -23,6 +23,13 @@ def simple_text_analysis(text):
 def index():
     return render_template('index.html')
 @app.route('/upload', methods=['GET', 'POST'])
+@app.route('/upload', methods=['GET', 'POST'])
+def upload():
+    if request.method == 'POST':
+        # Your file handling and processing logic
+        pass
+    return render_template('upload.html')
+
 
 def analyze():
     if request.method == 'POST':
