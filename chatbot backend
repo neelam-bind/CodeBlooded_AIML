@@ -1,0 +1,63 @@
+from flask import Flask, request, jsonify
+import json
+import pickle
+from keras.models import load_model
+from nltk.stem import WordNetLemmatizer
+import numpy as np
+import random
+import nltk
+
+# Initialize Flask app
+app = Flask(__name__)
+
+# Load models and data
+lemmatizer = WordNetLemmatizer()
+model = load_model("chatbot_model.h5")
+with open("intents3.json", "r") as file:
+    intents = json.load(file)
+with open("words.pkl", "rb") as file:
+    words = pickle.load(file)
+with open("classes.pkl", "rb") as file:
+    classes = pickle.load(file)
+
+# Text preprocessing
+def clean_up_sentence(sentence):
+    sentence_words = nltk.word_tokenize(sentence)
+    sentence_words = [lemmatizer.lemmatize(word.lower()) for word in sentence_words]
+    return sentence_words
+
+def bow(sentence, words):
+    sentence_words = clean_up_sentence(sentence)
+    bag = [0] * len(words)
+    for s in sentence_words:
+        for i, w in enumerate(words):
+            if w == s:
+                bag[i] = 1
+    return np.array(bag)
+
+# Predict intent
+def predict_class(sentence):
+    p = bow(sentence, words)
+    res = model.predict(np.array([p]))[0]
+    ERROR_THRESHOLD = 0.25
+    results = [[i, r] for i, r in enumerate(res) if r > ERROR_THRESHOLD]
+    results.sort(key=lambda x: x[1], reverse=True)
+    return [{"intent": classes[r[0]], "probability": str(r[1])} for r in results]
+
+# Generate response
+def get_response(intents_list, intents_json):
+    tag = intents_list[0]["intent"]
+    for i in intents_json["intents"]:
+        if i["tag"] == tag:
+            return random.choice(i["responses"])
+    return "I didn't understand that. Can you rephrase?"
+
+@app.route("/chat", methods=["POST"])
+def chatbot_response():
+    user_input = request.json.get("query", "")
+    intents_list = predict_class(user_input)
+    response = get_response(intents_list, intents)
+    return jsonify({"response": response})
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
