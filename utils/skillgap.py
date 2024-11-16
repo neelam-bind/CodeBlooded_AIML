@@ -45,7 +45,7 @@ def extract_skills_from_text(text):
     return [skill for skill in skills_list if skill in text]
 
 # Load job descriptions and preprocess
-df = pd.read_csv('data.csv')
+df = pd.read_csv('data/data.csv')
 df['cleaned_job_desc'] = df['Job Description'].apply(clean_text)
 df['skills_needed'] = df['cleaned_job_desc'].apply(extract_skills_from_text)
 
