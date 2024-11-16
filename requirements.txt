@@ -1,6 +1,7 @@
 streamlit
-nltk
 pandas
+fitz  # PyMuPDF
+nltk
 scikit-learn
-PyMuPDF
-
+openai
+reportlab
