@@ -5,10 +5,14 @@ from keras.models import load_model
 from nltk.stem import WordNetLemmatizer
 import numpy as np
 import random
+import logging
 import nltk
 
 # Initialize Flask app
 app = Flask(__name__)
+
+# Set up logging
+logging.basicConfig(level=logging.INFO)
 
 # Load models and data
 lemmatizer = WordNetLemmatizer()
@@ -46,18 +50,47 @@ def predict_class(sentence):
 
 # Generate response
 def get_response(intents_list, intents_json):
+    if not intents_list:
+        return "I'm sorry, I couldn't understand that. Can you clarify?"
     tag = intents_list[0]["intent"]
     for i in intents_json["intents"]:
         if i["tag"] == tag:
             return random.choice(i["responses"])
     return "I didn't understand that. Can you rephrase?"
 
+# Warmup model to reduce latency on first request
+@app.before_first_request
+def warmup_model():
+    logging.info("Warming up the model...")
+    bow("", words)  # Trigger model initialization
+    model.predict(np.array([np.zeros(len(words))]))
+    logging.info("Model warmup complete.")
+
+# Health check endpoint
+@app.route("/health", methods=["GET"])
+def health_check():
+    return jsonify({"status": "healthy"}), 200
+
+# Chatbot response endpoint
 @app.route("/chat", methods=["POST"])
 def chatbot_response():
-    user_input = request.json.get("query", "")
-    intents_list = predict_class(user_input)
-    response = get_response(intents_list, intents)
-    return jsonify({"response": response})
+    try:
+        user_input = request.json.get("query", "").strip()
+        if not user_input:
+            return jsonify({"response": "Please provide a valid input."}), 400
+        
+        logging.info(f"Received input: {user_input}")
+        
+        # Predict intent and generate response
+        intents_list = predict_class(user_input)
+        response = get_response(intents_list, intents)
+        
+        logging.info(f"Generated response: {response}")
+        return jsonify({"response": response})
+    except Exception as e:
+        logging.error(f"Error: {str(e)}")
+        return jsonify({"response": f"An error occurred: {str(e)}"}), 500
 
+# Run the server
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
