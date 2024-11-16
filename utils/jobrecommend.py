@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
+import streamlit as st
 
 def fetch_internshala_jobs():
     url = "https://internshala.com/internships"
@@ -68,5 +69,28 @@ def scrape_all_jobs():
     fresherworld_jobs = fetch_fresherworld_jobs()
 
     all_jobs = pd.concat([internshala_jobs, indeed_jobs, fresherworld_jobs], ignore_index=True)
-    all_jobs.to_csv("data/scraped_jobs.csv", index=False)
-    print("Scraping completed and data saved to scraped_jobs.csv")
+    return all_jobs
+
+# UI function to integrate with Streamlit
+def jobrecommend_ui():
+    st.title("Job Recommendations Scraper")
+
+    if st.button("Fetch Job Listings"):
+        st.write("Scraping job data. This may take a few moments...")
+
+        # Scrape all jobs and display in Streamlit
+        all_jobs = scrape_all_jobs()
+        st.write("Scraping completed! Here are the latest job listings:")
+        st.dataframe(all_jobs)
+
+        # Option to download as CSV
+        csv_data = all_jobs.to_csv(index=False)
+        st.download_button(
+            label="Download job listings as CSV",
+            data=csv_data,
+            file_name="scraped_jobs.csv",
+            mime="text/csv"
+        )
+    else:
+        st.write("Click the button above to fetch job listings from Internshala, Indeed, and Fresherworld.")
+
