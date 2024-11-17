@@ -1,106 +1,41 @@
-import requests
-from bs4 import BeautifulSoup
-import pandas as pd
 import streamlit as st
+import time  # Import time to add delay
 
-def fetch_internshala_jobs():
-    url = "https://internshala.com/internships"
-    response = requests.get(url)
-    soup = BeautifulSoup(response.text, 'html.parser')
-
-    jobs = []
-    for job_card in soup.select('.individual_internship'):
-        title = job_card.select_one('.job-title-href').text.strip()
-        company = job_card.select_one('.company_name').text.strip()
-        location = job_card.select_one('.location').text.strip()
-
-        jobs.append({
-            'title': title,
-            'company': company,
-            'location': location,
-        })
-    return pd.DataFrame(jobs)
-
-def fetch_indeed_jobs():
-    url = "https://www.indeed.com/jobs?q=software+engineer"
-    response = requests.get(url)
-    soup = BeautifulSoup(response.text, 'html.parser')
-
-    jobs = []
-    for job_card in soup.select('.jobsearch-SerpJobCard'):
-        title = job_card.select_one('.title').text.strip()
-        company = job_card.select_one('.company').text.strip()
-        location = job_card.select_one('.location').text.strip()
-        description = job_card.select_one('.summary').text.strip()
-
-        jobs.append({
-            'title': title,
-            'company': company,
-            'location': location,
-            'description': description
-        })
-    return pd.DataFrame(jobs)
-
-def fetch_fresherworld_jobs():
-    url = "https://www.freshersworld.com/jobs"
-    response = requests.get(url)
-    soup = BeautifulSoup(response.text, 'html.parser')
-
-    jobs = []
-    for job_card in soup.select('.job-list'):
-        title = job_card.select_one('.job-title').text.strip()
-        company = job_card.select_one('.company-name').text.strip()
-        location = job_card.select_one('.location').text.strip()
-        description = job_card.select_one('.description').text.strip()
-
-        jobs.append({
-            'title': title,
-            'company': company,
-            'location': location,
-            'description': description
-        })
-    return pd.DataFrame(jobs)
-
-def scrape_all_jobs():
-    # internshala_jobs = fetch_internshala_jobs()
-    indeed_jobs = fetch_indeed_jobs()
-    fresherworld_jobs = fetch_fresherworld_jobs()
-
-    all_jobs = pd.concat([indeed_jobs, fresherworld_jobs], ignore_index=True)
-    return all_jobs
-
-# UI function to integrate with Streamlit
-def jobrecommend_ui():
-    st.title("Job Recommendations Scraper")
-
-    if st.button("Fetch Job Listings"):
-        st.write("Scraping job data. This may take a few moments...")
-
-        # Scrape all jobs and display in Streamlit
-        all_jobs = scrape_all_jobs()
-        st.write("Scraping completed! Here are the latest job listings:")
-        st.dataframe(all_jobs)
-
-        # Option to download as CSV
-        csv_data = all_jobs.to_csv(index=False)
-        st.download_button(
-            label="Download job listings as CSV",
-            data=csv_data,
-            file_name="scraped_jobs.csv",
-            mime="text/csv"
-        )
-    else:
-        st.write("Click the button above to fetch job listings from Internshala, Indeed, and Fresherworld.")
+# Predefined fake response for "How to become a project manager?"
+def fake_response_for_project_manager():
+    return """
+    To become a project manager, follow these steps:
     
-    # Resume Upload Feature
-    st.subheader("Upload Your Resume")
-    resume_file = st.file_uploader("Upload your resume (PDF format)", type=["pdf"])
-    if resume_file is not None:
-        st.write("Resume uploaded successfully!")
-        # You can add more functionality here to parse and analyze the resume.
-        # For example: Extracting skills or displaying basic information.
-    else:
-        st.write("Please upload your resume for personalized job recommendations.")
+    1. **Obtain a relevant education**: A bachelor's degree in business, management, or a related field is a good starting point.
+    2. **Gain experience**: Start working in entry-level roles such as project assistant, coordinator, or intern to understand the basics of project management.
+    3. **Develop soft skills**: Effective communication, problem-solving, leadership, and organizational skills are key for managing projects.
+    4. **Get certifications**: Consider pursuing certifications like PMP (Project Management Professional) or ScrumMaster to demonstrate your expertise.
+    5. **Build a portfolio**: Document your experiences managing projects to show your ability to lead teams and complete projects on time and within budget.
+    6. **Apply for Project Manager positions**: Start applying for PM roles to further develop your career.
+    """
+    
+# Streamlit UI for the chatbot
+def chatbot_ui():
+    st.title("OpenAI Chatbot - Fake Response")
 
-# Run the UI function in Streamlit
-jobrecommend_ui()
+    # Input for user message
+    user_input = st.text_input("You: ", "")
+
+    # Show a button to trigger the answer
+    if st.button("Submit"):
+        # Display "Finding answer..." while waiting
+        with st.spinner("Finding answer..."):
+            time.sleep(2)  # Add a 2-second delay
+        
+            # If user asks "How to become a project manager"
+            if "how to become a project manager" in user_input.lower():
+                bot_response = fake_response_for_project_manager()
+            else:
+                bot_response = "Sorry, I don't know the answer to that. But I can help with something else!"
+
+            # Display the bot response after the delay
+            st.write(f"Bot: {bot_response}")
+
+# Run the chatbot UI
+if __name__ == "__main__":
+    chatbot_ui()
