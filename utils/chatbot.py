@@ -1,8 +1,9 @@
 import openai
 import streamlit as st
+import os
 
-# Replace with your OpenAI API key (use environment variable in production)
-openai.api_key = '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'
+# Replace this with your OpenAI API key, ideally stored as an environment variable in production
+openai.api_key = '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'
 
 class CareerChatbot:
     def __init__(self):
@@ -19,7 +20,7 @@ class CareerChatbot:
 
             # Call OpenAI API to get the bot response
             response = openai.Completion.create(
-                engine="text-davinci-003",  # Use GPT-3 model
+                model="text-davinci-003",  # Use GPT-3 model
                 prompt=prompt,
                 max_tokens=150,
                 temperature=0.7,
