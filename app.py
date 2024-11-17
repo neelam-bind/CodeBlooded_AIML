@@ -10,6 +10,14 @@ st.title("HireScope")
 
 # Display a small image with a set width
 st.image("hirescope.png", width=150)  # Adjust width as needed
+st.markdown(
+    """
+    <div style="text-align: right;">
+        <img src="path/to/your_image.png" width="150">
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
 
 # Sidebar navigation
