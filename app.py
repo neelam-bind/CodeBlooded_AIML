@@ -3,7 +3,7 @@ from utils.jobrecommend import jobrecommend_ui
 from utils.markettrend import markettrend_ui
 from utils.skillgap import skillgap_ui
 from utils.airesume import airesume_ui
-from utils.chatbot import chatbot_ui
+#from utils.chatbot import chatbot_ui
 
 # App Title
 st.title("HireScope")
