@@ -4,7 +4,6 @@ pandas==1.5.3  # Make sure the pandas version matches your environment
 pymupdf  # For PDF text extraction (fitz)
 nltk
 scikit-learn
-openai==0.28
 reportlab  # For generating PDF reports (if applicable)
 beautifulsoup4  # For parsing HTML with Beautiful Soup
 requests  # For making HTTP requests
