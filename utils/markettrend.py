@@ -23,6 +23,7 @@ def plot_job_roles():
     ax.set_xlabel('Job Role', fontsize=12)
     ax.set_ylabel('Frequency', fontsize=12)
     plt.xticks(rotation=45)
+    ax.set_xticklabels(role_counts.index, rotation=45, ha='right')
     st.pyplot(fig)
 
 # Function to visualize industries
