@@ -49,7 +49,7 @@ df = pd.read_csv('data/data.csv')
 df['cleaned_job_desc'] = df['Job Description'].apply(clean_text)
 df['skills_needed'] = df['cleaned_job_desc'].apply(extract_skills_from_text)
 
-def recommend_jobs_from_resume(resume_pdf_path, top_n=5):
+def recommend_jobs_from_resume(resume_pdf_path, top_n=3):
     """Recommends jobs based on skills found in the user's resume."""
     resume_text = extract_text_from_pdf(resume_pdf_path)
     cleaned_resume_text = clean_text(resume_text)
