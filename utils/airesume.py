@@ -3,12 +3,17 @@ import fitz  # PyMuPDF for PDF text extraction
 from datetime import datetime
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
-import openai 
+import openai
+import streamlit as st
+import pandas as pd
+from collections import Counter
+import nltk
+from nltk.corpus import stopwords
 
-# OpenAI API key (replace with your own API key)
-openai.api_key = 'YOUR_OPENAI_API_KEY'  # Replace with your OpenAI API key
+# Set OpenAI API key (replace with your actual API key)
+openai.api_key = 'YOUR_OPENAI_API_KEY'
 
-# Step 1: Extract text from a PDF file
+# Function to extract text from a PDF file
 def extract_text_from_pdf(pdf_path):
     text = ""
     with fitz.open(pdf_path) as pdf:
@@ -16,7 +21,7 @@ def extract_text_from_pdf(pdf_path):
             text += page.get_text()
     return text
 
-# Step 2: Extract and Enhance Content from Poorly Defined Resume
+# Extract and enhance resume content
 def extract_and_improve_content(poor_resume_text):
     sections = {}
     lines = poor_resume_text.split('\n')
@@ -30,7 +35,7 @@ def extract_and_improve_content(poor_resume_text):
     sections["education"] = extract_education(poor_resume_text)
     return sections
 
-# Step 3: Use OpenAI API to suggest improvements
+# OpenAI suggestion improvements for each section
 def ai_suggest_improvements(section_name, content):
     try:
         response = openai.Completion.create(
@@ -43,23 +48,23 @@ def ai_suggest_improvements(section_name, content):
         print(f"Error with OpenAI API: {e}")
         return content
 
-# Step 4: Extract Skills
+# Function to extract skills
 def extract_skills(poor_resume_text):
     skills_keywords = ["Python", "Java", "SQL", "Machine Learning", "AI", "Data Science"]
     skills = [skill for skill in skills_keywords if skill.lower() in poor_resume_text.lower()]
     return ', '.join(skills) if skills else "N/A"
 
-# Step 5: Extract Experience
+# Function to extract experience
 def extract_experience(poor_resume_text):
     experience = re.search(r'Experience[:\n]*(.*?)(?=\nEducation|$)', poor_resume_text, re.DOTALL)
     return experience.group(1).strip() if experience else "N/A"
 
-# Step 6: Extract Education
+# Function to extract education
 def extract_education(poor_resume_text):
     education = re.search(r'Education[:\n]*(.*?)(?=\nProjects|$)', poor_resume_text, re.DOTALL)
     return education.group(1).strip() if education else "N/A"
 
-# Step 7: Generate Enhanced Resume PDF
+# Generate enhanced resume PDF
 def save_resume_to_pdf(data):
     filename = f"Enhanced_Resume_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
     pdf = canvas.Canvas(filename, pagesize=letter)
@@ -94,23 +99,42 @@ def save_resume_to_pdf(data):
                 y_position = 750
 
     pdf.save()
-    print(f"Enhanced resume saved as {filename}")
+    return filename
 
-# Main function to run the process
-def main():
-    # Update the path to your input resume PDF
-    poor_resume_pdf_path = "/content/CEC-Poor-vs-Good-Resume.pdf"  
-    poor_resume_text = extract_text_from_pdf(poor_resume_pdf_path)
+# Streamlit UI function
+def airesume_ui():
+    st.title("Resume Improvement Tool")
+    
+    uploaded_file = st.file_uploader("Upload a PDF Resume", type="pdf")
+    
+    if uploaded_file is not None:
+        # Step 1: Extract text from PDF
+        with open("/tmp/resume.pdf", "wb") as f:
+            f.write(uploaded_file.read())
+        poor_resume_text = extract_text_from_pdf("/tmp/resume.pdf")
+        
+        # Display the extracted text
+        st.subheader("Extracted Resume Text")
+        st.text(poor_resume_text)
+        
+        # Step 2: Extract and improve content
+        extracted_data = extract_and_improve_content(poor_resume_text)
+        
+        # Step 3: Enhance each section using OpenAI API
+        st.subheader("Improved Resume Content")
+        for section in extracted_data:
+            improved_content = ai_suggest_improvements(section, extracted_data[section])
+            st.write(f"**{section.capitalize()}:**")
+            st.write(improved_content)
+            extracted_data[section] = improved_content  # Update with improved content
+        
+        # Step 4: Save the enhanced content to a new PDF
+        if st.button("Generate Enhanced Resume PDF"):
+            pdf_path = save_resume_to_pdf(extracted_data)
+            st.success(f"Enhanced resume saved as {pdf_path}")
+            with open(pdf_path, "rb") as pdf_file:
+                st.download_button(label="Download Enhanced Resume", data=pdf_file, file_name=pdf_path)
 
-    # Step 1: Extract and improve content
-    extracted_data = extract_and_improve_content(poor_resume_text)
-
-    # Step 2: Enhance each section using OpenAI API
-    for section in extracted_data:
-        extracted_data[section] = ai_suggest_improvements(section, extracted_data[section])
-
-    # Step 3: Save the enhanced content to a new PDF
-    save_resume_to_pdf(extracted_data)
-
+# Example usage
 if __name__ == "__main__":
-    main()
+    airesume_ui()
