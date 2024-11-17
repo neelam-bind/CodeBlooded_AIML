@@ -1,4 +1,4 @@
-# utils/chatbot.py
+'''# utils/chatbot.py
 
 import streamlit as st
 from chatterbot import ChatBot
@@ -110,4 +110,4 @@ def chatbot_ui():
     # Get response from chatbot and display it
     if user_input:
         response = chatbot.get_response(user_input)
-        st.write("Bot:", response)
+        st.write("Bot:", response)'''
