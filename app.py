@@ -17,7 +17,7 @@ options = {
     "Market Trend Analysis": markettrend_ui,
     "Skill Gap Identification": skillgap_ui,
     "Resume Parsing": airesume_ui,
-    "Career Advice Chatbot": chatbot_ui,
+    #"Career Advice Chatbot": chatbot_ui,
 }
 
 # Function selection and display
