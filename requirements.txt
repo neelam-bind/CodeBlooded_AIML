@@ -1,5 +1,5 @@
 streamlit
-pandas
+pandas==1.5.3  # Make sure the pandas version matches your environment
 pymupdf  # For PDF text extraction (fitz)
 nltk
 scikit-learn
