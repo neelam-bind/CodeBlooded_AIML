@@ -9,6 +9,5 @@ beautifulsoup4  # For parsing HTML with Beautiful Soup
 requests  # For making HTTP requests
 matplotlib  # For plotting (use as plt in code)
 seaborn
-ChatterBot==1.0.4
-ChatterBot_corpus==1.2.0
+
 
