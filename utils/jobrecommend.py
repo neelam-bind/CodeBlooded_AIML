@@ -12,7 +12,7 @@ def fetch_internshala_jobs():
     for job_card in soup.select('.individual_internship'):
         title = job_card.select_one('.job-title-href').text.strip()
         company = job_card.select_one('.company_name').text.strip()
-        location = job_card.select_one('.row-1-item locations').text.strip()
+        location = job_card.select_one('.location').text.strip()
 
         jobs.append({
             'title': title,
@@ -62,11 +62,11 @@ def fetch_fresherworld_jobs():
     return pd.DataFrame(jobs)
 
 def scrape_all_jobs():
-    #internshala_jobs = fetch_internshala_jobs()
+    # internshala_jobs = fetch_internshala_jobs()
     indeed_jobs = fetch_indeed_jobs()
     fresherworld_jobs = fetch_fresherworld_jobs()
 
-    all_jobs = pd.concat([internshala_jobs, indeed_jobs, fresherworld_jobs], ignore_index=True)
+    all_jobs = pd.concat([indeed_jobs, fresherworld_jobs], ignore_index=True)
     return all_jobs
 
 # UI function to integrate with Streamlit
@@ -91,4 +91,16 @@ def jobrecommend_ui():
         )
     else:
         st.write("Click the button above to fetch job listings from Internshala, Indeed, and Fresherworld.")
+    
+    # Resume Upload Feature
+    st.subheader("Upload Your Resume")
+    resume_file = st.file_uploader("Upload your resume (PDF format)", type=["pdf"])
+    if resume_file is not None:
+        st.write("Resume uploaded successfully!")
+        # You can add more functionality here to parse and analyze the resume.
+        # For example: Extracting skills or displaying basic information.
+    else:
+        st.write("Please upload your resume for personalized job recommendations.")
 
+# Run the UI function in Streamlit
+jobrecommend_ui()
