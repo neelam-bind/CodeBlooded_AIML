@@ -1,35 +1,26 @@
-import openai
 import streamlit as st
 import time
 
-# Set your OpenAI API key here
-openai.api_key = "your-openai-api-key"
-
-# Function to get chatbot response
-def get_chatbot_response(user_input):
-    # Simulate thinking time
+# Fake function to simulate chatbot response
+def get_fake_chatbot_response(user_input):
+    # Simulating thinking time
     time.sleep(2)  # Delay of 2 seconds before showing response
     with st.empty():
         st.write("Finding answer...")
 
-    try:
-        response = openai.Completion.create(
-            engine="gpt-4",  # You can use gpt-3.5-turbo for lower usage
-            prompt=user_input,
-            max_tokens=150,
-            temperature=0.7,
-            n=1,
-            stop=None
-        )
+    # Predefined fake response (you can change it based on the input)
+    fake_responses = {
+        "how to become a project manager": "To become a project manager, you should have strong organizational skills, experience managing teams, and knowledge of project management methodologies like Agile or Waterfall. It’s also helpful to get certified in project management, such as a PMP certification.",
+        "what is machine learning": "Machine learning is a field of artificial intelligence that uses algorithms to learn patterns from data and make decisions or predictions based on that data.",
+    }
 
-        answer = response.choices[0].text.strip()
-        return answer
-    except Exception as e:
-        return f"Error: {str(e)}"
+    # Return fake response based on the input or a default response
+    return fake_responses.get(user_input.lower(), "I'm not sure about that. Could you ask something else?")
 
-# UI function to integrate the chatbot into the Streamlit app
+# UI function to integrate the fake chatbot into the Streamlit app
 def chatbot_ui():
     st.title("Career Assistance Chatbot")
+    st.image("chatbot_image.png", width=200)  # Optional: Replace with your chatbot image
     
     # Introduction
     st.subheader("Hello! I'm here to help with your career queries. Ask me anything.")
@@ -37,10 +28,11 @@ def chatbot_ui():
     # Text input field for the user to type their message
     user_input = st.text_input("You:", "")
     
+    # Handle case when there is user input
     if user_input:
         # Display a loader while fetching the response
         with st.spinner("Thinking..."):
-            response = get_chatbot_response(user_input)
+            response = get_fake_chatbot_response(user_input)
             st.write("Chatbot:", response)
     
     # Handle chatbot response or error
@@ -53,25 +45,11 @@ def chatbot_ui():
     if st.button('End Conversation'):
         st.write("Chatbot: Goodbye! Feel free to reach out anytime.")
 
-    # Empty code sections (Placeholders)
-    # Placeholder for empty logic or incomplete features
-    # pass  # No code here will not raise an error
-    
-    # Placeholder for additional features
-    # (You can add more code or features in this section later)
-    # pass  # No code here will not raise an error
-    
-    # Placeholder for error handling
-    # try:
-    #     pass  # Add logic here in the future
-    # except Exception as e:
-    #     st.write(f"Error: {str(e)}")
-    
-    # Another empty section for future updates
-    # pass  # Empty, will not throw errors
-
-    
-    # Option to end conversation
-    if st.button('End Conversation'):
-        st.write("Chatbot: Goodbye! Feel free to reach out anytime.")
+    # Placeholder for empty or incomplete sections
+    # You can fill this in later or leave it as a future extension point without causing errors
+    try:
+        # Placeholder code, can add more features here in the future
+        pass  # This will not cause any error
+    except Exception as e:
+        st.write(f"Error: {str(e)}")
 
