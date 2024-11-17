@@ -7,25 +7,10 @@ from utils.chatbot import chatbot_ui
 
 # App Title
 st.title("HireScope")
-st.markdown(
-    """
-    <style>
-    /* Styling for the title */
-    .custom-title {
-        font-size: 48px;        /* Adjusts the font size */
-        font-weight: 700;       /* Makes it bolder */
-        color: #1A1A1A;         /* Dark color for a professional look */
-        text-align: center;     /* Centers the title */
-        margin-top: 20px;       /* Adds some space above the title */
-        margin-bottom: 30px;    /* Adds space below the title */
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
 
-# Use custom CSS class to style the title text
-st.markdown('<div class="custom-title">HireScope</div>', unsafe_allow_html=True)
+# Display a small image with a set width
+st.image("image.png", width=150)  # Adjust width as needed
+
 
 # Sidebar navigation
 st.sidebar.title("Navigation")
