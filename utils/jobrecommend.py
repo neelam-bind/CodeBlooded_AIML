@@ -48,7 +48,7 @@ def fetch_jobs_from_board(url, skills):
     for job_card in soup.select('.job-card-class'):  # Replace with actual CSS selectors for each board
         title = job_card.select_one('.job-internship-name').text.strip()  # Adjust based on job board
         company = job_card.select_one('.company-name').text.strip()
-        location = job_card.select_one('.location').text.strip()
+        location = job_card.select_one('.row-1-item locations').text.strip()
         description = job_card.select_one('.description').text.strip()
 
         jobs.append({
