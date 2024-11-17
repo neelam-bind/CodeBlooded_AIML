@@ -9,7 +9,7 @@ from utils.chatbot import chatbot_ui
 st.title("HireScope")
 
 # Display a small image with a set width
-st.image("image.png", width=150)  # Adjust width as needed
+st.image("hirescope.png", width=150)  # Adjust width as needed
 
 
 # Sidebar navigation
