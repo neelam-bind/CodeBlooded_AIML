@@ -30,7 +30,7 @@ def get_chatbot_response(user_input):
 # UI function to integrate the chatbot into the Streamlit app
 def chatbot_ui():
     st.title("Career Assistance Chatbot")
-    st.image("chatbot_image.png", width=200)  # Optional: Replace with your chatbot image
+    st.image("img.png", width=200)  # Optional: Replace with your chatbot image
     
     # Introduction
     st.subheader("Hello! I'm here to help with your career queries. Ask me anything.")
