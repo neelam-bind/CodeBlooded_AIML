@@ -10,7 +10,7 @@ import streamlit as st
 
 # Download necessary NLTK resources
 nltk.download('stopwords')
-nltk.download('punkt')
+nltk.download('punkt_tab')
 nltk.download('wordnet')
 
 def extract_text_from_pdf(pdf_path):
