@@ -6,7 +6,7 @@ from utils.airesume import airesume_ui
 from utils.chatbot import chatbot_ui
 
 # App Title
-st.title("Career Assistance Tool")
+st.title("HireScope")
 
 # Sidebar navigation
 st.sidebar.title("Navigation")
