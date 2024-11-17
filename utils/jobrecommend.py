@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import streamlit as st
 
-def fetch_internshala_jobs():
+'''def fetch_internshala_jobs():
     url = "https://internshala.com/internships"
     response = requests.get(url)
     soup = BeautifulSoup(response.text, 'html.parser')
@@ -19,7 +19,7 @@ def fetch_internshala_jobs():
             'company': company,
             'location': location,
         })
-    return pd.DataFrame(jobs)
+    return pd.DataFrame(jobs)'''
 
 def fetch_indeed_jobs():
     url = "https://www.indeed.com/jobs?q=software+engineer"
