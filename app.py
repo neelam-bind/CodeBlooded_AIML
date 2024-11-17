@@ -8,8 +8,6 @@ from utils.chatbot import chatbot_ui
 # App Title
 st.title("HireScope")
 
-# Display a small image with a set width
-st.image("hirescope.png", width=150)  # Adjust width as needed
 <div style="text-align: right;">
     <img src="hirescope.png" width="150">
 </div>
