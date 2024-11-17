@@ -12,7 +12,7 @@ def fetch_internshala_jobs():
     for job_card in soup.select('.individual_internship'):
         title = job_card.select_one('.job-title-href').text.strip()
         company = job_card.select_one('.company_name').text.strip()
-        location = job_card.select_one('.ic-16-map-pin').text.strip()
+        location = job_card.select_one('.row-1-item locations').text.strip()
 
         jobs.append({
             'title': title,
