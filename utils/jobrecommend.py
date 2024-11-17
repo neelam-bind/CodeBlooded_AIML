@@ -13,13 +13,11 @@ def fetch_internshala_jobs():
         title = job_card.select_one('.job-title-href').text.strip()
         company = job_card.select_one('.company_name').text.strip()
         location = job_card.select_one('.ic-16-map-pin').text.strip()
-        skills = job_card.select_one('.skills').text.strip()
 
         jobs.append({
             'title': title,
             'company': company,
             'location': location,
-            'skills': skills
         })
     return pd.DataFrame(jobs)
 
