@@ -8,10 +8,8 @@ from utils.chatbot import chatbot_ui
 # App Title
 st.title("HireScope")
 
-<div style="text-align: right;">
-    <img src="hirescope.png" width="150">
-</div>
- 
+st.image("hirescope.png", width=150)
+
 # Sidebar navigation
 st.sidebar.title("Navigation")
 options = {
