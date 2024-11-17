@@ -4,13 +4,8 @@ import pandas as pd
 import streamlit as st
 import fitz  # PyMuPDF for extracting text from PDFs
 import re
-import spacy  # For NLP-based skills extraction (optional)
-from collections import defaultdict
 
-# Load spaCy model for advanced NLP processing (optional, for skill extraction)
-# nlp = spacy.load("en_core_web_sm")  # You can use a larger model if needed
-
-# Domain-specific skills (you can expand this list based on the industry/domain)
+# Define domain-specific skills (this can be expanded as needed)
 DOMAIN_SKILLS = {
     'Software Development': ["python", "java", "javascript", "react", "node.js", "html", "css", "sql", "c++", "ruby", "machine learning"],
     'Data Science': ["python", "pandas", "numpy", "scikit-learn", "tensorflow", "data visualization", "sql", "deep learning", "r"],
@@ -20,7 +15,7 @@ DOMAIN_SKILLS = {
     'Design': ["photoshop", "illustrator", "ux/ui", "figma", "adobe xd", "wireframing", "graphic design", "prototyping"]
 }
 
-# Extract text from the uploaded PDF
+# Function to extract text from a PDF file
 def extract_text_from_pdf(pdf_file):
     doc = fitz.open(pdf_file)
     text = ""
@@ -28,7 +23,7 @@ def extract_text_from_pdf(pdf_file):
         text += page.get_text()
     return text
 
-# Extract skills dynamically from the resume text based on domain-specific skills
+# Function to extract skills dynamically from the resume text based on domain-specific skills
 def extract_skills_from_text(text, domain):
     extracted_skills = []
     skills_list = DOMAIN_SKILLS.get(domain, [])
@@ -39,17 +34,17 @@ def extract_skills_from_text(text, domain):
     
     return extracted_skills
 
-# Scrape job listings from domain-specific job boards (like Internshala, Indeed, Fresherworld)
-def fetch_jobs_from_board(url, skills):
+# Scrape job listings from the specified URL and return them as a DataFrame
+def fetch_jobs_from_board(url):
     response = requests.get(url)
     soup = BeautifulSoup(response.text, 'html.parser')
 
     jobs = []
     for job_card in soup.select('.job-card-class'):  # Replace with actual CSS selectors for each board
-        title = job_card.select_one('.job-internship-name').text.strip()  # Adjust based on job board
-        company = job_card.select_one('.company-name').text.strip()
-        location = job_card.select_one('.row-1-item locations').text.strip()
-        description = job_card.select_one('.About the internship').text.strip()
+        title = job_card.select_one('.job-title').text.strip()
+        company = job_card.select_one('.company').text.strip()
+        location = job_card.select_one('.location').text.strip()
+        description = job_card.select_one('.description').text.strip()
 
         jobs.append({
             'title': title,
@@ -59,42 +54,62 @@ def fetch_jobs_from_board(url, skills):
         })
     return pd.DataFrame(jobs)
 
-# Scrape job listings based on the domain and skills
-def scrape_jobs_by_domain(skills, domain):
+# Scrape job listings based on extracted skills
+def scrape_jobs_by_skills(skills):
+    # URLs for job boards to scrape, customize per domain if needed
     job_boards = {
-        'Software Development': ["https://www.indeed.com/jobs?q=software+developer", "https://internshala.com/internships"],
-        'Data Science': ["https://www.indeed.com/jobs?q=data+scientist", "https://fresherworld.com/jobs"],
-        'Web Development': ["https://www.indeed.com/jobs?q=web+developer", "https://internshala.com/internships"],
-        'Finance': ["https://www.indeed.com/jobs?q=finance", "https://fresherworld.com/jobs"],
-        'Marketing': ["https://www.indeed.com/jobs?q=marketing", "https://internshala.com/internships"],
-        'Design': ["https://www.indeed.com/jobs?q=graphic+designer", "https://internshala.com/internships"]
+        'Software Development': [
+            "https://www.indeed.com/jobs?q=software+developer",
+            "https://internshala.com/internships"
+        ],
+        'Data Science': [
+            "https://www.indeed.com/jobs?q=data+scientist",
+            "https://fresherworld.com/jobs"
+        ],
+        'Web Development': [
+            "https://www.indeed.com/jobs?q=web+developer",
+            "https://internshala.com/internships"
+        ],
+        'Finance': [
+            "https://www.indeed.com/jobs?q=finance",
+            "https://fresherworld.com/jobs"
+        ],
+        'Marketing': [
+            "https://www.indeed.com/jobs?q=marketing",
+            "https://internshala.com/internships"
+        ],
+        'Design': [
+            "https://www.indeed.com/jobs?q=graphic+designer",
+            "https://internshala.com/internships"
+        ]
     }
 
+    # Choose job boards based on the skills
+    domain = 'Software Development'  # You can adjust based on user selection
     all_jobs = pd.DataFrame()
+    
     for board_url in job_boards.get(domain, []):
-        board_jobs = fetch_jobs_from_board(board_url, skills)
+        board_jobs = fetch_jobs_from_board(board_url)
         all_jobs = pd.concat([all_jobs, board_jobs], ignore_index=True)
 
     return all_jobs
 
-# Streamlit UI function to interact with users and display the results
+# Streamlit UI function to handle file upload, skill extraction, and job scraping
 def jobrecommend_ui():
-    st.title("Personalized Job Recommendations Based on Resume")
-
-    # Select domain for job recommendations
-    domain = st.selectbox("Select your preferred domain", list(DOMAIN_SKILLS.keys()))
-
-    st.subheader("Upload Your Resume (PDF format)")
+    st.title("Job Recommendations Based on Your Resume")
 
     # File uploader for resume
-    resume_file = st.file_uploader("Upload your resume", type=["pdf"])
-    
+    resume_file = st.file_uploader("Upload your resume (PDF format)", type=["pdf"])
+
     if resume_file is not None:
         st.write("Resume uploaded successfully!")
-        
+
         # Extract text from the resume
         resume_text = extract_text_from_pdf(resume_file)
 
+        # Ask user for their preferred domain
+        domain = st.selectbox("Select your preferred domain", list(DOMAIN_SKILLS.keys()))
+        
         # Extract skills from the resume text based on the selected domain
         skills = extract_skills_from_text(resume_text, domain)
 
@@ -103,12 +118,12 @@ def jobrecommend_ui():
             st.write("Fetching job listings based on these skills...")
 
             # Scrape job listings based on extracted skills
-            all_jobs = scrape_jobs_by_domain(skills, domain)
+            all_jobs = scrape_jobs_by_skills(skills)
             if not all_jobs.empty:
                 st.write("Here are the job listings based on your skills:")
                 st.dataframe(all_jobs)
                 
-                # Option to download as CSV
+                # Save the results to a CSV file and provide download link
                 csv_data = all_jobs.to_csv(index=False)
                 st.download_button(
                     label="Download job listings as CSV",
@@ -118,7 +133,6 @@ def jobrecommend_ui():
                 )
             else:
                 st.write("No job listings found based on the extracted skills.")
-
         else:
             st.write("No relevant skills found in your resume. Please try uploading a different resume or select a different domain.")
 
