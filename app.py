@@ -1,5 +1,5 @@
 import streamlit as st
-#from utils.jobrecommend import jobrecommend_ui
+from utils.jobrecommend import jobrecommend_ui
 from utils.markettrend import markettrend_ui
 from utils.skillgap import skillgap_ui
 from utils.airesume import airesume_ui
