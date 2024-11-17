@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import streamlit as st
 
+# Fetch job data from Internshala
 def fetch_internshala_jobs():
     url = "https://internshala.com/internships"
     response = requests.get(url)
@@ -21,6 +22,7 @@ def fetch_internshala_jobs():
         })
     return pd.DataFrame(jobs)
 
+# Fetch job data from Indeed
 def fetch_indeed_jobs():
     url = "https://www.indeed.com/jobs?q=software+engineer"
     response = requests.get(url)
@@ -41,6 +43,7 @@ def fetch_indeed_jobs():
         })
     return pd.DataFrame(jobs)
 
+# Fetch job data from Fresherworld
 def fetch_fresherworld_jobs():
     url = "https://www.freshersworld.com/jobs"
     response = requests.get(url)
@@ -61,22 +64,23 @@ def fetch_fresherworld_jobs():
         })
     return pd.DataFrame(jobs)
 
+# Combine all job data into one DataFrame
 def scrape_all_jobs():
-    # internshala_jobs = fetch_internshala_jobs()
+    internshala_jobs = fetch_internshala_jobs()
     indeed_jobs = fetch_indeed_jobs()
     fresherworld_jobs = fetch_fresherworld_jobs()
 
-    all_jobs = pd.concat([indeed_jobs, fresherworld_jobs], ignore_index=True)
+    all_jobs = pd.concat([internshala_jobs, indeed_jobs, fresherworld_jobs], ignore_index=True)
     return all_jobs
 
-# UI function to integrate with Streamlit
+# Streamlit UI function
 def jobrecommend_ui():
     st.title("Job Recommendations Scraper")
 
     if st.button("Fetch Job Listings"):
         st.write("Scraping job data. This may take a few moments...")
 
-        # Scrape all jobs and display in Streamlit
+        # Scrape jobs and display in Streamlit
         all_jobs = scrape_all_jobs()
         st.write("Scraping completed! Here are the latest job listings:")
         st.dataframe(all_jobs)
@@ -92,15 +96,12 @@ def jobrecommend_ui():
     else:
         st.write("Click the button above to fetch job listings from Internshala, Indeed, and Fresherworld.")
     
-    # Resume Upload Feature
+    # Resume upload feature for additional functionality
     st.subheader("Upload Your Resume")
     resume_file = st.file_uploader("Upload your resume (PDF format)", type=["pdf"])
     if resume_file is not None:
         st.write("Resume uploaded successfully!")
-        # You can add more functionality here to parse and analyze the resume.
-        # For example: Extracting skills or displaying basic information.
+        # Add functionality for parsing and analyzing the resume if needed.
     else:
         st.write("Please upload your resume for personalized job recommendations.")
 
-# Run the UI function in Streamlit
-jobrecommend_ui()
