@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import streamlit as st
 
-'''def fetch_internshala_jobs():
+def fetch_internshala_jobs():
     url = "https://internshala.com/internships"
     response = requests.get(url)
     soup = BeautifulSoup(response.text, 'html.parser')
@@ -90,5 +90,5 @@ def jobrecommend_ui():
             mime="text/csv"
         )
     else:
-        st.write("Click the button above to fetch job listings from Internshala, Indeed, and Fresherworld.")'''
+        st.write("Click the button above to fetch job listings from Internshala, Indeed, and Fresherworld.")
 
