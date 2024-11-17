@@ -62,7 +62,7 @@ def fetch_fresherworld_jobs():
     return pd.DataFrame(jobs)
 
 def scrape_all_jobs():
-    internshala_jobs = fetch_internshala_jobs()
+    #internshala_jobs = fetch_internshala_jobs()
     indeed_jobs = fetch_indeed_jobs()
     fresherworld_jobs = fetch_fresherworld_jobs()
 
