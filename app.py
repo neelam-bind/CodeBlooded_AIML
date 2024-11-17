@@ -20,6 +20,6 @@ options = {
     "Career Advice Chatbot": chatbot_ui,
 }
 
-Function selection and display
+
 selection = st.sidebar.radio("Choose a Functionality", list(options.keys()))
 options[selection]()  # Call the selected functionality's UI function
