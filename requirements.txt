@@ -3,7 +3,7 @@ pandas
 pymupdf  # For PDF text extraction (fitz)
 nltk
 scikit-learn
-openai>1.0.0
+openai==0.28
 reportlab  # For generating PDF reports (if applicable)
 beautifulsoup4  # For parsing HTML with Beautiful Soup
 requests  # For making HTTP requests
