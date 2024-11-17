@@ -3,7 +3,7 @@ import streamlit as st
 import os
 
 # Replace this with your OpenAI API key, ideally stored as an environment variable in production
-openai.api_key = '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'
+openai.api_key = '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'
 
 class CareerChatbot:
     def __init__(self):
