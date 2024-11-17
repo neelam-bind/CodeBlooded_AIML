@@ -1,4 +1,5 @@
 import streamlit as st
+import time  # Import time to add delay
 
 # Predefined fake response for "How to become a project manager?"
 def fake_response_for_project_manager():
@@ -20,17 +21,20 @@ def chatbot_ui():
     # Input for user message
     user_input = st.text_input("You: ", "")
 
-    # If user has inputted a message
-    if user_input:
-        # Fake response for "How to become a project manager?"
-        if "how to become a project manager" in user_input.lower():
-            bot_response = fake_response_for_project_manager()
-        else:
-            # For other inputs, a default fake response
-            bot_response = "Sorry, I don't know the answer to that. But I can help with something else!"
+    # Show a button to trigger the answer
+    if st.button("Submit"):
+        # Display "Finding answer..." while waiting
+        with st.spinner("Finding answer..."):
+            time.sleep(2)  # Add a 2-second delay
+        
+            # If user asks "How to become a project manager"
+            if "how to become a project manager" in user_input.lower():
+                bot_response = fake_response_for_project_manager()
+            else:
+                bot_response = "Sorry, I don't know the answer to that. But I can help with something else!"
 
-        # Display the bot response
-        st.write(f"Bot: {bot_response}")
+            # Display the bot response after the delay
+            st.write(f"Bot: {bot_response}")
 
 # Run the chatbot UI
 if __name__ == "__main__":
