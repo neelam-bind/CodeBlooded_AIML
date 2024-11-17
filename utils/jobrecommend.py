@@ -19,7 +19,7 @@ import streamlit as st
             'company': company,
             'location': location,
         })
-    return pd.DataFrame(jobs)'''
+    return pd.DataFrame(jobs)
 
 def fetch_indeed_jobs():
     url = "https://www.indeed.com/jobs?q=software+engineer"
@@ -90,5 +90,5 @@ def jobrecommend_ui():
             mime="text/csv"
         )
     else:
-        st.write("Click the button above to fetch job listings from Internshala, Indeed, and Fresherworld.")
+        st.write("Click the button above to fetch job listings from Internshala, Indeed, and Fresherworld.")'''
 
