@@ -1,11 +1,9 @@
-# chatbot.py
-
 import openai
 import streamlit as st
 from datetime import datetime
 
 # Replace with your OpenAI API key
-openai.api_key = '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'
+openai.api_key = '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'
 
 class CareerChatbot:
     def __init__(self):
@@ -72,3 +70,4 @@ def chatbot_ui():
     if st.button("Reset Conversation"):
         chatbot.reset_conversation()
         st.info("Conversation history cleared.")
+
