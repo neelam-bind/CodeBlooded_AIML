@@ -1,4 +1,4 @@
-import streamlit as st
+'''import streamlit as st
 import time
 
 # Fake function to simulate chatbot response
@@ -52,4 +52,4 @@ def chatbot_ui():
         pass  # This will not cause any error
     except Exception as e:
         st.write(f"Error: {str(e)}")
-
+'''
