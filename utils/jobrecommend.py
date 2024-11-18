@@ -10,15 +10,43 @@ def fetch_internshala_jobs():
 
     jobs = []
     for job_card in soup.select('.individual_internship'):
-        title = job_card.select_one('.job-internship-name').text.strip()
-        company = job_card.select_one('.company_name').text.strip()
-        location = job_card.select_one('.ic-16-map-pin').text.strip()
-
+        # Extract and print the title
+        title = job_card.select_one('.job-internship-name')
+        if title:
+            title = title.text.strip()
+        else:
+            title = "Title not found"
+        
+        # Extract and print the company
+        company = job_card.select_one('.company_name')
+        if company:
+            company = company.text.strip()
+        else:
+            company = "Company not found"
+        
+        # Extract and print the location
+        location = job_card.select_one('.ic-16-map-pin')
+        if location:
+            location = location.text.strip()
+        else:
+            location = "Location not found"
+        
+        # Extract and print the stipend (salary)
+        stipend = job_card.select_one('.stipend')
+        if stipend:
+            stipend = stipend.text.strip()
+        else:
+            stipend = "Stipend not found"
+        
+        # Add job data to list
         jobs.append({
             'title': title,
             'company': company,
             'location': location,
+            'stipend': stipend,
         })
+    
+    # Return job listings as a DataFrame
     return pd.DataFrame(jobs)
 
 def scrape_internshala_jobs():
