@@ -1,46 +1,54 @@
-import requests
+import time
+import random
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
 import pandas as pd
 import streamlit as st
 
-def fetch_internshala_jobs():
-    url = "https://internshala.com/internships"
-    response = requests.get(url)
-    soup = BeautifulSoup(response.text, 'html.parser')
+# Setup Selenium WebDriver (Chrome)
+def init_driver():
+    options = webdriver.ChromeOptions()
+    options.add_argument('--headless')  # Run in headless mode (no UI)
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+    return driver
 
-    jobs = []
-    for job_card in soup.select('.individual_internship'):
-        title = job_card.select_one('.job-title-href').text.strip()
-        company = job_card.select_one('.company_name').text.strip()
-        location = job_card.select_one('.location').text.strip()
-
-        jobs.append({
-            'title': title,
-            'company': company,
-            'location': location,
-        })
-    return pd.DataFrame(jobs)
-
+# Fetch Indeed jobs
 def fetch_indeed_jobs():
     url = "https://www.indeed.com/jobs?q=software+engineer"
-    response = requests.get(url)
-    soup = BeautifulSoup(response.text, 'html.parser')
+    
+    # Initialize WebDriver and open the page
+    driver = init_driver()
+    driver.get(url)
+    
+    # Wait for the page to load
+    time.sleep(random.randint(2, 5))  # Sleep for random seconds to avoid getting blocked
+    
+    # Get the page source after JavaScript has loaded
+    page_source = driver.page_source
+    
+    # Parse with BeautifulSoup
+    soup = BeautifulSoup(page_source, 'html.parser')
 
     jobs = []
     for job_card in soup.select('.jobsearch-SerpJobCard'):
-        title = job_card.select_one('.title').text.strip()
-        company = job_card.select_one('.company').text.strip()
-        location = job_card.select_one('.location').text.strip()
-        description = job_card.select_one('.summary').text.strip()
-
+        title = job_card.select_one('.title').text.strip() if job_card.select_one('.title') else "Title not found"
+        company = job_card.select_one('.company').text.strip() if job_card.select_one('.company') else "Company not found"
+        location = job_card.select_one('.location').text.strip() if job_card.select_one('.location') else "Location not found"
+        description = job_card.select_one('.summary').text.strip() if job_card.select_one('.summary') else "Description not found"
+        
         jobs.append({
             'title': title,
             'company': company,
             'location': location,
             'description': description
         })
+    
+    driver.quit()  # Close the driver
     return pd.DataFrame(jobs)
 
+# Fetch Fresherworld jobs
 def fetch_fresherworld_jobs():
     url = "https://www.freshersworld.com/jobs"
     response = requests.get(url)
@@ -61,15 +69,35 @@ def fetch_fresherworld_jobs():
         })
     return pd.DataFrame(jobs)
 
+# Fetch Internshala jobs
+def fetch_internshala_jobs():
+    url = "https://internshala.com/internships"
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, 'html.parser')
+
+    jobs = []
+    for job_card in soup.select('.individual_internship'):
+        title = job_card.select_one('.job-title-href').text.strip()
+        company = job_card.select_one('.company_name').text.strip()
+        location = job_card.select_one('.location').text.strip()
+
+        jobs.append({
+            'title': title,
+            'company': company,
+            'location': location,
+        })
+    return pd.DataFrame(jobs)
+
+# Combine all job sources
 def scrape_all_jobs():
-    # internshala_jobs = fetch_internshala_jobs()
+    internshala_jobs = fetch_internshala_jobs()
     indeed_jobs = fetch_indeed_jobs()
     fresherworld_jobs = fetch_fresherworld_jobs()
 
-    all_jobs = pd.concat([indeed_jobs, fresherworld_jobs], ignore_index=True)
+    all_jobs = pd.concat([internshala_jobs, indeed_jobs, fresherworld_jobs], ignore_index=True)
     return all_jobs
 
-# UI function to integrate with Streamlit
+# Streamlit UI
 def jobrecommend_ui():
     st.title("Job Recommendations Scraper")
 
