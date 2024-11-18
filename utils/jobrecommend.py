@@ -6,6 +6,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
 import pandas as pd
 import streamlit as st
+import requests  # Don't forget to import requests if you are using it for other sites
 
 # Setup Selenium WebDriver (Chrome)
 def init_driver():
@@ -13,40 +14,6 @@ def init_driver():
     options.add_argument('--headless')  # Run in headless mode (no UI)
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
     return driver
-
-# Fetch Indeed jobs
-def fetch_indeed_jobs():
-    url = "https://www.indeed.com/jobs?q=software+engineer"
-    
-    # Initialize WebDriver and open the page
-    driver = init_driver()
-    driver.get(url)
-    
-    # Wait for the page to load
-    time.sleep(random.randint(2, 5))  # Sleep for random seconds to avoid getting blocked
-    
-    # Get the page source after JavaScript has loaded
-    page_source = driver.page_source
-    
-    # Parse with BeautifulSoup
-    soup = BeautifulSoup(page_source, 'html.parser')
-
-    jobs = []
-    for job_card in soup.select('.jobsearch-SerpJobCard'):
-        title = job_card.select_one('.title').text.strip() if job_card.select_one('.title') else "Title not found"
-        company = job_card.select_one('.company').text.strip() if job_card.select_one('.company') else "Company not found"
-        location = job_card.select_one('.location').text.strip() if job_card.select_one('.location') else "Location not found"
-        description = job_card.select_one('.summary').text.strip() if job_card.select_one('.summary') else "Description not found"
-        
-        jobs.append({
-            'title': title,
-            'company': company,
-            'location': location,
-            'description': description
-        })
-    
-    driver.quit()  # Close the driver
-    return pd.DataFrame(jobs)
 
 # Fetch Fresherworld jobs
 def fetch_fresherworld_jobs():
@@ -91,10 +58,9 @@ def fetch_internshala_jobs():
 # Combine all job sources
 def scrape_all_jobs():
     internshala_jobs = fetch_internshala_jobs()
-    indeed_jobs = fetch_indeed_jobs()
     fresherworld_jobs = fetch_fresherworld_jobs()
 
-    all_jobs = pd.concat([internshala_jobs, indeed_jobs, fresherworld_jobs], ignore_index=True)
+    all_jobs = pd.concat([internshala_jobs, fresherworld_jobs], ignore_index=True)
     return all_jobs
 
 # Streamlit UI
@@ -118,7 +84,7 @@ def jobrecommend_ui():
             mime="text/csv"
         )
     else:
-        st.write("Click the button above to fetch job listings from Internshala, Indeed, and Fresherworld.")
+        st.write("Click the button above to fetch job listings from Internshala and Fresherworld.")
     
     # Resume Upload Feature
     st.subheader("Upload Your Resume")
